@@ -7,6 +7,11 @@ async function getAllUsers() {
     return await db.all(sql);
 }
 
+async function getLogin() {
+    let sql = "SELECT username, password FROM users;";
+    return await db.get(sql);
+}
+
 // Fetch user preferences including fitness goals and experience level
 async function getUserPreferences(userId) {
     const sql = `
