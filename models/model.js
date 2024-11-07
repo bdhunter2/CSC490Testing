@@ -413,5 +413,6 @@ module.exports = {
     getQValue,
     upsertQValue,
     getAllMuscles,
-    getUser
+    getUser,
+    getLogin
 };
