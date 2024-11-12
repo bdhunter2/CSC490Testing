@@ -616,6 +616,270 @@ INSERT INTO exercises (
                           'Leg press',
                             20
                       );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          27,
+                          28,
+                          118,
+                          2,
+                          5,
+                          20,
+                          15,
+                          'Curls',
+                            15
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          28,
+                          28,
+                          119,
+                          1,
+                          10,
+                          65,
+                          15,
+                          'Bench',
+                            15
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          29,
+                          28,
+                          120,
+                          3,
+                          15,
+                          0,
+                          15,
+                          'Push-ups',
+                            15
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          30,
+                          25,
+                          121,
+                          3,
+                          10,
+                          0,
+                          15,
+                          'Squat',
+                            15
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          31,
+                          25,
+                          122,
+                          2,
+                          1,
+                          0,
+                          15,
+                          'Plank',
+                            30
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          32,
+                          25,
+                          123,
+                          2,
+                          5,
+                          0,
+                          15,
+                          'Pull-ups',
+                            30
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          33,
+                          26,
+                          124,
+                          2,
+                          3,
+                          115,
+                          15,
+                          'Deadlift',
+                            30
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          34,
+                          26,
+                          125,
+                          3,
+                          8,
+                          45,
+                          15,
+                          'Row',
+                            30
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          35,
+                          26,
+                          126,
+                          3,
+                          10,
+                          20,
+                          15,
+                          'Tricep extension',
+                            30
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          36,
+                          27,
+                          127,
+                          2,
+                          8,
+                          20,
+                          15,
+                          'Overhead Press',
+                            30
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          37,
+                          27,
+                          128,
+                          3,
+                          8,
+                          40,
+                          15,
+                          'Lat Pulldowns',
+                            30
+                      );
+INSERT INTO exercises (
+                          exercise_id,
+                          workout_id,
+                          api_id,
+                          plan_sets,
+                          plan_reps,
+                          plan_weight,
+                          rest_time,
+                          exercise_name,
+                            duration
+                      )
+                      VALUES (
+                          38,
+                          27,
+                          129,
+                          3,
+                          10,
+                          20,
+                          15,
+                          'Hip thrusts',
+                            30
+                      );
 -- Table: feedback
 CREATE TABLE IF NOT EXISTS feedback (
     feedback_id INT NOT NULL
@@ -1070,7 +1334,30 @@ INSERT INTO q_values (
                          6,
                          1.0
                      );
-
+INSERT INTO q_values (
+                         user_id,
+                         state,
+                         action,
+                         q_value
+                     )
+                     VALUES (
+                         3601,
+                         'StrengthBeginner',
+                         7,
+                         1.1
+                     );
+INSERT INTO q_values (
+                         user_id,
+                         state,
+                         action,
+                         q_value
+                     )
+                     VALUES (
+                         3601,
+                         'StrengthIntermediate',
+                         8,
+                         1.2
+                     );
 
 -- Table: user_feedback
 CREATE TABLE IF NOT EXISTS user_feedback (
@@ -1939,7 +2226,34 @@ INSERT INTO workout_plans (
                               1
                           );
 
-
+INSERT INTO workout_plans (
+                              plan_id,
+                              user_id,
+                              start_date,
+                              end_date,
+                              active
+                          )
+                          VALUES (
+                              7,
+                              3601,
+                              '2024-06-01',
+                              '2024-06-31',
+                              0
+                          );
+INSERT INTO workout_plans (
+                              plan_id,
+                              user_id,
+                              start_date,
+                              end_date,
+                              active
+                          )
+                          VALUES (
+                              8,
+                              3601,
+                              '2024-06-01',
+                              '2024-06-31',
+                              0
+                          );
 -- Table: workouts
 CREATE TABLE IF NOT EXISTS workouts (
     workout_id    INT  NOT NULL
@@ -2139,6 +2453,45 @@ INSERT INTO workouts (
                          'Medium'
                      );
 
-
+INSERT INTO workouts (
+                         workout_id,
+                         plan_id,
+                         intensity
+                     )
+                     VALUES (
+                         25,
+                         7,
+                         'Low'
+                     );
+INSERT INTO workouts (
+                         workout_id,
+                         plan_id,
+                         intensity
+                     )
+                     VALUES (
+                         26,
+                         8,
+                         'Medium'
+                     );
+INSERT INTO workouts (
+                         workout_id,
+                         plan_id,
+                         intensity
+                     )
+                     VALUES (
+                         27,
+                         8,
+                         'Medium'
+                     );
+INSERT INTO workouts (
+                         workout_id,
+                         plan_id,
+                         intensity
+                     )
+                     VALUES (
+                         28,
+                         7,
+                         'Low'
+                     );
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
