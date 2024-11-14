@@ -229,17 +229,20 @@ async function getUser(req, res, next) {
 }
 
 async function submitPlanFeedback(req, res) {
+    console.log("submitPlanFeedback called");
     console.log("Form submission data:", req.body);
     try {
         const { userId, planId, rating, totalCaloriesBurned } = req.body;
         console.log(`Received feedback - User ID: ${userId}, Plan ID: ${planId}, Rating: ${rating}, Calories Burned: ${totalCaloriesBurned}`);
 
         // Insert or update user plan feedback in the database
-        await model.storeUserPlanFeedback(userId, planId, rating, totalCaloriesBurned);
+        //await model.storeUserPlanFeedback(userId, planId, rating, totalCaloriesBurned);
 
         if (!userId || !planId || !rating) {
             return res.status(400).send('Missing required parameters: userId, planId, or feedback');
         }
+
+        await model.storeUserPlanFeedback(userId, planId, rating, totalCaloriesBurned);
 
         // Fetch user's current state from the database (preferences or history)
         const state = await model.getUserPreferences(userId);
@@ -263,6 +266,7 @@ async function submitPlanFeedback(req, res) {
         const totalWeightLifted = performanceMetrics.reduce((sum, metric) => sum + (metric.plan_reps * metric.plan_weight), 0);
 
         // Pass aggregated metrics to determineNextState
+        // NEED TO USE MODEL VERSION OF THIS FUNCTION
         const nextState = determineNextState(state.fit_goal + state.exp_level, rating, { reps: totalReps, weightLifted: totalWeightLifted }, state.userPreferences);
 
 
@@ -272,10 +276,17 @@ async function submitPlanFeedback(req, res) {
         }
 
         // Calculate reward
-        const reward = model.calculateReward({ rating, totalCaloriesBurned });
+        // REWARD IS ALWAYS 0
+        //const reward = model.calculateReward({ rating, totalCaloriesBurned });
+
+        const feedback = await model.getUserPlanFeedback(userId, planId);
+        const reward = model.calculateReward(feedback);
+        console.log(`Reward in submitPlanFeedback: ${reward}`);
 
         // Update Q-value based on feedback and reward
         await model.updateQValue(userId, state.fit_goal + state.exp_level, Number(planId), reward, nextState);
+        // TEST
+        //await updateQValue(userId, state, recommendedPlan.plan_id, reward, nextState);
 
         // Respond with success
         res.status(200).send({ 
@@ -291,6 +302,7 @@ async function submitPlanFeedback(req, res) {
         res.status(500).send({ error: 'Error submitting feedback.' });
     }
 }
+// THIS IS ALREADY IN MODEL, USE MODEL VERSION IN submitPlanFeedback
 function determineNextState(currentState, feedback, performanceMetrics, userPreferences) {
     
 
@@ -364,12 +376,12 @@ console.log(`Test Next State: ${nextState}`); */
 
 
 // COLLIN ADDED
-async function getPerformanceMetricsFront(req,res,next){
-    const user_id =req.params.user_id.replace (/[^\d.]/g, '' );
+async function getUserHistory(req, res, next) {
+    const user_id = req.params.user_id.replace(/[^\d.]/g, '');
     try {
-        let performance = await model.getPerformanceMetrics(user_id);
+        let performance = await model.getUserHistory(user_id);
         res.json({performance:performance});
-    }catch (error){
+    } catch (error) {
         next(error);
     }
 }
@@ -385,7 +397,7 @@ module.exports = {
     getLogin,
 
     // COLLIN ADDED
-    getPerformanceMetricsFront
+    getUserHistory
 };
 // Different plan, same state: Chosen when feedback is positive or performance doesn’t warrant a state change.
 // New state: Triggered by low feedback or high performance, suggesting either a new workout type (e.g., cardio) or a new level (e.g., intermediate).

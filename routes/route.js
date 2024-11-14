@@ -45,13 +45,19 @@ router.post('/workoutperformance/create', crudController.createWorkoutPerformanc
 router.post('/workoutperformance/update', crudController.updateWorkoutPerformance);
 router.post('/workoutperformance/:user_id', crudController.getWorkoutPerformance);
 
+// COLLIN ADDED
+router.get("/userworkouthistory/:user_id",controller.getUserHistory);
 
 
 
 // Main TODOs
-// TODO: feedback does not to be resubmitted per refresh
-// TODO: state changes (update user fit_goal and experience level directly in db when state changes)
-// TODO: injury and muscle filtering
+// TODO: feedback does not to be resubmitted per refresh (done?)
+// TODO: state changes (update user fit_goal and experience level directly in db when state changes), all of this is done in the model
+// TODO: injury and muscle filtering (muscle filtering done in getWorkoutPlans?)
+// TODO: change to hosted db
+
+// use updateUserState in controller to update state after state change?
+// keep determineNextState in submitPlanFeedback, remove it from recommendWorkoutPlansWithRL
 
 
 
@@ -60,7 +66,7 @@ router.post('/workoutperformance/:user_id', crudController.getWorkoutPerformance
 module.exports = router;
 
 // TODO: add decaying epsilon so that the model explores less as it learns more from user feedback
-// TODO: individual q-values for users (done?)
+// TODO: individual q-values for users (done)
 // TODO: formatting of 'state' in q_tables
 // TODO: consider muscle groups
 // TODO: no more cals, need to store and consider injuries

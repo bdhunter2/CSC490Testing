@@ -26,6 +26,7 @@ async function getUserPreferences(userId) {
     return await db.get(sql, [userId]);
 }
 
+
 // KEEP THIS, WORKS
 // Fetch active workout plans for the user, including associated workouts and exercises
 //for severe workouts just modify this
@@ -100,6 +101,7 @@ async function getLogin(username) {
 
 
 async function getWorkoutPlanDetails(planId) {
+    console.log("getWorkoutPlanDetails called");
     const sql = `
     SELECT wp.plan_id, wp.start_date, wp.end_date, wp.active, 
            w.workout_id, e.exercise_id, e.api_id, e.plan_sets, 
@@ -251,7 +253,8 @@ async function getWorkoutPlanDetails(planId) {
 
 
 async function getWorkoutPlans(userId) {
-    const sql = `
+    // USE, WILLS ORIGINAL
+    /* const sql = `
     SELECT wp.plan_id, wp.start_date, wp.end_date, wp.active, 
            w.workout_id, e.exercise_id, e.api_id, e.plan_sets, 
            e.plan_reps, e.plan_weight, e.rest_time, 
@@ -260,11 +263,27 @@ async function getWorkoutPlans(userId) {
         JOIN workouts w ON wp.plan_id = w.plan_id
         JOIN exercises e ON w.workout_id = e.workout_id
     WHERE wp.user_id = ? AND wp.active = true;
+    `; */
+
+    console.log("getWorkoutPlans called");
+    // COLLINS MUSCLE FILTERING
+    const sql = `SELECT wp.plan_id, wp.start_date, wp.end_date, wp.active, w.*
+    FROM users u
+    JOIN workout_plans wp ON wp.user_id = u.user_id
+    JOIN workouts w ON wp.plan_id = w.plan_id
+    JOIN exercises e ON w.workout_id = e.workout_id
+    JOIN muscle_workout mw ON w.workout_id = mw.workout_id 
+    JOIN muscle m ON m.muscle_id = mw.muscle_id
+    LEFT JOIN user_injury ui ON ui.muscle_id = m.muscle_id AND ui.user_id = u.user_id
+    WHERE wp.user_id = ? 
+    AND wp.active = true 
+    AND (ui.injury_intensity IS NULL OR ui.injury_intensity <> 'severe')
+    GROUP BY w.workout_id;
     `;
 
     const rows = await db.all(sql, [userId]);
 
-    console.log('Raw SQL Result Rows:', rows);
+    //console.log('Raw SQL Result Rows:', rows);
 
     const plans = {};
 
@@ -361,7 +380,7 @@ async function storeUserPlanFeedback(userId, planId, rating, totalCaloriesBurned
 }
 
 
-// ADDDED
+// ADDED
 async function getUserWorkoutPlans(userId) {
     if (!userId || isNaN(userId)) {
         throw new Error('Invalid User ID');
@@ -445,6 +464,7 @@ async function upsertQValue(userId, state, action, qValue) {
 
 // ADDED
 async function updateQValue(userId, state, action, reward, nextState) {
+    console.log("updateQValue called");
     const learningRate = 0.1;
     const discountFactor = 0.9;
 
@@ -912,10 +932,11 @@ console.log(`Feedback viewing: ${JSON.stringify(feedback)}`);
 
 // Define thresholds for feedback and performance
 const feedbackThreshold = 3; // Threshold for low ratings triggering a state change
-const performanceThreshold = 5; // Threshold for performance improvement triggering state progression
+const performanceThreshold = 5; // Threshold for performance improvement triggering state progression */
 
+// DONT USE
 // Example state mappings based on feedback and performance
-const stateMapping = {
+/* const stateMapping = {
     "StrengthBeginner": "StrengthIntermediate",
     "StrengthIntermediate": "StrengthAdvanced",
     "CardioBeginner": "CardioIntermediate",
@@ -924,16 +945,28 @@ const stateMapping = {
     // ADDED
     "StrengthAdvanced": "StrengthBeginner"
 };
+let nextState = currentState; */
 
-let nextState = currentState;
+// ADDED FOR STATE CHANGE UPDATE IN DB, USE
+/* const stateMapping = {
+    "StrengthBeginner": { fitGoal: "Strength", expLevel: "Intermediate" },
+    "StrengthIntermediate": { fitGoal: "Strength", expLevel: "Advanced" },
+    "CardioBeginner": { fitGoal: "Cardio", expLevel: "Intermediate" },
+    "CardioIntermediate": { fitGoal: "Cardio", expLevel: "Advanced" },
+    "StrengthAdvanced": { fitGoal: "Strength", expLevel: "Beginner" }
+};
+let nextState = { fitGoal: currentState.split(/(?=[A-Z])/)[0], expLevel: currentState.split(/(?=[A-Z])/)[1] };
+
 
 // Evaluate user feedback (positive or negative)
 if (feedback.rating < feedbackThreshold) {
     // If feedback is consistently low, consider transitioning to a different workout focus or difficulty level
     if (currentState.includes("Strength")) {
-        nextState = "CardioBeginner"; // Transition to cardio if strength is poorly rated
+        //nextState = "CardioBeginner"; // Transition to cardio if strength is poorly rated
+        nextState = { fitGoal: "Cardio", expLevel: "Beginner" };
     } else if (currentState.includes("Cardio")) {
-        nextState = "StrengthBeginner"; // Transition to strength if cardio is poorly rated
+        //nextState = "StrengthBeginner"; // Transition to strength if cardio is poorly rated
+        nextState = { fitGoal: "Strength", expLevel: "Beginner" };
     }
 } else if (feedback.rating >= feedbackThreshold && feedback.rating <= 5) {
     // Check performance metrics for improvement
@@ -990,16 +1023,24 @@ async function recommendWorkoutPlansWithRL(userPreferences, workoutPlans, userId
 
 
     // Use the current state as the next state
+    // USE FOR NO STATE CHANGE
     const nextState = state;
 
     // ADD FOR STATE CHANGE IMPLEMENTATION
     //const performanceMetrics = await getPerformanceMetrics(recommendedPlan.plan_id);
     //const nextState = determineNextState(state, feedback, performanceMetrics, userPreferences);
+    // ADDED FOR DB NEXT STATE UPDATE TEST
+    //const { fitGoal, expLevel } = nextState;
+    //await updateUserState(userId, fitGoal, expLevel);
+
 
     console.log(`State: ${state}, Next State: ${nextState}, Feedback Rating: ${feedback.rating}`);
 
     // Update Q-value based on feedback and new state
-    await updateQValue(userId, state, recommendedPlan.plan_id, reward, nextState);
+
+    // REMOVED FOR TESTING, SOLVES AUTO FEEDBACK SUBMISSION ON REFRESH BUG
+    //await updateQValue(userId, state, recommendedPlan.plan_id, reward, nextState);
+
     //await updateQValue(userId, state, recommendedPlan, reward, nextState);
 
 
@@ -1139,6 +1180,21 @@ async function getWorkoutPerformance(userId) {
     return await db.get(sql, [userId]);
 }
 
+// COLLIN ADDED
+async function getUserHistory(user_id){
+    const query = `
+    SELECT u.user_id,u.fname,u.lname,wpr.perf_id,e.exercise_name, wpr.actual_sets,wpr.actual_reps,wpr.actual_weight,wpr.perf_date
+    FROM users u
+    JOIN workout_plans wpl ON wpl.user_id = u.user_id
+    JOIN workouts w ON w.plan_id = wpl.plan_id
+    JOIN exercises e ON e.workout_id = w.workout_id
+    JOIN workout_performance wpr ON wpr.exercise_id = e.exercise_id
+    WHERE wpl.user_id = ?
+    ORDER BY wpr.perf_date
+    ;`;
+    return await db.all(query, [user_id]);
+}
+
 
 module.exports = {
     getAllUsers,
@@ -1163,5 +1219,8 @@ module.exports = {
     // ADDED
     updateUserState,
 
-    getWorkoutPlanDetails
+    getWorkoutPlanDetails,
+
+    // COLLIN ADDED
+    getUserHistory
 };
